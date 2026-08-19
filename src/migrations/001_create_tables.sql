@@ -41,3 +41,24 @@ CREATE TABLE subscriptions(
         REFERENCES plans(id)
         ON DELETE RESTRICT
 );
+
+CREATE TABLE usage_events (
+    id SERIAL PRIMARY KEY,
+    tenant_id INTEGER NOT NULL,
+    request_id VARCHAR(255) UNIQUE NOT NULL,
+    input_tokens INTEGER NOT NULL DEFAULT 0,
+    output_tokens INTEGER NOT NULL DEFAULT 0,
+    cached_input_tokens INTEGER DEFAULT 0,
+    reasoning_tokens INTEGER DEFAULT 0,
+    total_tokens INTEGER NOT NULL,
+    api_calls INTEGER NOT NULL DEFAULT 1,
+    cost DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_usage_tenant
+        FOREIGN KEY (tenant_id)
+        REFERENCES tenants(id)
+        ON DELETE CASCADE
+);
+
+ALTER TABLE usage_events ADD COLUMN idempotency_key VARCHAR(255) UNIQUE NOT NULL;
