@@ -1,4 +1,5 @@
 const pool = require("../config/db");
+const PRICING = require("../config/pricing");
 
 const record = async (req) => {
     const idempotencyKey = req.header("Idempotency-Key");
@@ -52,6 +53,21 @@ const record = async (req) => {
 
     const requestedRequests = Number(req.body.api_calls || 1);
     const requestedTokens  = Number(req.body.total_tokens || 0);
+    
+    const inputTokens = Number(req.body.input_tokens || 0);
+    const cachedInputTokens = Number(req.body.cached_input_tokens || 0);
+    const outputTokens = Number(req.body.output_tokens || 0);
+    const reasoningTokens = Number(req.body.reasoning_tokens || 0);
+
+    const billableInputTokens = Math.max(
+        inputTokens - cachedInputTokens,
+        0
+    );
+    const calculatedCost = 
+    requestedRequests * PRICING.apiCall + 
+    billableInputTokens * PRICING.inputToken +
+    cachedInputTokens * PRICING.cachedInputToken +
+    (outputTokens + reasoningTokens) * PRICING.outputToken;
 
     const requestLimit = Number(plan.monthly_request_limit);
     const tokenLimit = Number(plan.monthly_token_limit);
@@ -100,7 +116,7 @@ const record = async (req) => {
             req.body.reasoning_tokens,
             req.body.total_tokens,
             req.body.api_calls,
-            req.body.cost,
+            calculatedCost,
             idempotencyKey,
         ]
     );
