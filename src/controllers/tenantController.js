@@ -1,17 +1,24 @@
 const tenantService = require("../services/tenantServices");
 
-const createTenant = async(req,res) => {
-    try{
+const createTenant = async (req, res) => {
+    try {
         const tenant = await tenantService.createTenant(req.body);
 
-        res.status(201).json({
-            success:true,
-            data:tenant
+        return res.status(201).json({
+            success: true,
+            data: tenant
         });
-    }catch (err){
-        res.status(500).json({
-            success:false,
-            message:err.message
+    } catch (err) {
+        if (err.code === "23505") {
+            return res.status(409).json({
+                success: false,
+                message: "A tenant with this email already exists"
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
         });
     }
 };

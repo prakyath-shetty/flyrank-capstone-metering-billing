@@ -52,7 +52,7 @@ CREATE TABLE usage_events (
     reasoning_tokens INTEGER DEFAULT 0,
     total_tokens INTEGER NOT NULL,
     api_calls INTEGER NOT NULL DEFAULT 1,
-    cost DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    cost DECIMAL(12,8) NOT NULL DEFAULT 0.00000000,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_usage_tenant
