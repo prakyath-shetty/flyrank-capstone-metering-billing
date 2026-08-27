@@ -27,6 +27,7 @@ const getUsage = async (req, res) => {
             JOIN plans p ON s.plan_id = p.id
             WHERE s.tenant_id = $1
             AND s.status = 'active'
+            ORDER BY s.id DESC
             LIMIT 1`,
             [tenantId]
         );

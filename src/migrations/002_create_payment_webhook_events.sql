@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS payment_webhook_events (
+    id SERIAL PRIMARY KEY,
+    event_id VARCHAR(255) UNIQUE NOT NULL,
+    event_type VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
