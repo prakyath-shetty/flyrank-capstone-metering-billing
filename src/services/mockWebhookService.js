@@ -14,9 +14,20 @@ const generateSignature = (payload) => {
 const verifySignature = (payload, signature) => {
     const expectedSignature = generateSignature(payload);
 
+    if (!signature) {
+        return false;
+    }
+
+    const expectedBuffer = Buffer.from(expectedSignature, "utf8");
+    const signatureBuffer = Buffer.from(signature, "utf8");
+
+    if (expectedBuffer.length !== signatureBuffer.length) {
+        return false;
+    }
+
     return crypto.timingSafeEqual(
-        Buffer.from(expectedSignature),
-        Buffer.from(signature || "")
+        expectedBuffer,
+        signatureBuffer
     );
 };
 
